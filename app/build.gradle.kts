@@ -56,4 +56,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation ("androidx.compose.material3:material3:1.3.1")
+
+    // Accompanist library for status bar color
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
+    // Splash Screen
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 }
