@@ -23,10 +23,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yapss.my_to_do.R
-import com.yapss.my_to_do.presentation.calendar.Calendar
-import com.yapss.my_to_do.presentation.profile.Profile
-import com.yapss.my_to_do.presentation.tags.Tags
-import com.yapss.my_to_do.presentation.todo.ToDo
+import com.yapss.my_to_do.presentation.calendar.CalendarScreen
+import com.yapss.my_to_do.presentation.profile.ProfileScreen
+import com.yapss.my_to_do.presentation.tags.TagsScreen
+import com.yapss.my_to_do.presentation.todo.ToDoScreen
 
 sealed class Routes(val route:String, val iconPassive: Int, val iconActive:Int, val label:String){
     data object ToDo: Routes("To Do", R.drawable.outline_check_box_outline_blank_24, R.drawable.outline_check_box_24,"To Do")
@@ -82,16 +82,16 @@ fun NavigationHostPart(navController:NavHostController,startDestination:String =
         popExitTransition = { fadeOut(animationSpec = tween(0)) }
     ){
         composable(Routes.ToDo.route){
-            ToDo(modifier = modifier)
+            ToDoScreen(modifier = modifier)
         }
         composable(Routes.Calendar.route){
-            Calendar(modifier = modifier)
+            CalendarScreen(modifier = modifier)
         }
         composable(Routes.Tags.route){
-            Tags(modifier = modifier)
+            TagsScreen(modifier = modifier)
         }
         composable(Routes.Profile.route){
-            Profile(modifier = modifier)
+            ProfileScreen(modifier = modifier)
         }
     }
 }

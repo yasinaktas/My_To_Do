@@ -1,6 +1,5 @@
-package com.yapss.my_to_do.presentation.profile
+package com.yapss.my_to_do.presentation.tags
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
 
 @Composable
-fun Profile(modifier: Modifier = Modifier){
+fun TagsScreen(modifier: Modifier = Modifier){
     Box (modifier = modifier){
         Column(
             modifier = Modifier

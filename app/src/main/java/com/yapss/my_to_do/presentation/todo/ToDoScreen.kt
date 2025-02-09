@@ -30,7 +30,7 @@ import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation._components.ComponentTextField
 
 @Composable
-fun ToDo(modifier: Modifier = Modifier){
+fun ToDoScreen(modifier: Modifier = Modifier){
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
@@ -111,5 +111,5 @@ fun ToDo(modifier: Modifier = Modifier){
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun PreviewToDo(){
-    ToDo()
+    ToDoScreen()
 }
