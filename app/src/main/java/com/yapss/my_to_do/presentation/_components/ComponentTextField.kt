@@ -48,7 +48,7 @@ fun ComponentTextFieldOutlined(text:String,placeHolder:String,onTextChange:(Stri
 @Composable
 fun ComponentTextField(modifier:Modifier = Modifier, text:String,placeHolder:String,onTextChange:(String) -> Unit){
     TextField(
-        modifier = Modifier,
+        modifier = modifier,
         value = text,
         singleLine = true,
         onValueChange = onTextChange,

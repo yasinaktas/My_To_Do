@@ -24,18 +24,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yapss.my_to_do.R
 import com.yapss.my_to_do.presentation.calendar.Calendar
+import com.yapss.my_to_do.presentation.profile.Profile
 import com.yapss.my_to_do.presentation.tags.Tags
 import com.yapss.my_to_do.presentation.todo.ToDo
 
 sealed class Routes(val route:String, val iconPassive: Int, val iconActive:Int, val label:String){
     data object ToDo: Routes("To Do", R.drawable.outline_check_box_outline_blank_24, R.drawable.outline_check_box_24,"To Do")
     data object Calendar: Routes("Calendar", R.drawable.outline_calendar_today_24, R.drawable.outline_calendar_month_24 ,"Calendar")
-    data object Tags: Routes("Tags", R.drawable.outline_search_24, R.drawable.outline_saved_search_24,"Tags")
+    data object Tags: Routes("Tags", R.drawable.outline_folder_24, R.drawable.outline_folder_special_24,"Tags")
+    data object Profile: Routes("Profile", R.drawable.baseline_person_pin_24, R.drawable.baseline_person_pin_24,"Profile")
 }
 
 @Composable
 fun BottomNavigationPart(navController: NavHostController){
-    val routes = listOf<Routes>(Routes.ToDo, Routes.Calendar, Routes.Tags)
+    val routes = listOf<Routes>(Routes.ToDo, Routes.Calendar, Routes.Tags, Routes.Profile)
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry.value?.destination?.route
     BottomAppBar (
@@ -80,13 +82,16 @@ fun NavigationHostPart(navController:NavHostController,startDestination:String =
         popExitTransition = { fadeOut(animationSpec = tween(0)) }
     ){
         composable(Routes.ToDo.route){
-            ToDo()
+            ToDo(modifier = modifier)
         }
         composable(Routes.Calendar.route){
-            Calendar()
+            Calendar(modifier = modifier)
         }
         composable(Routes.Tags.route){
-            Tags()
+            Tags(modifier = modifier)
+        }
+        composable(Routes.Profile.route){
+            Profile(modifier = modifier)
         }
     }
 }

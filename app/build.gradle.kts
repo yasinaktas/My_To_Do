@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 android {
@@ -65,4 +66,28 @@ dependencies {
 
     // Splash Screen
     implementation ("androidx.core:core-splashscreen:1.0.1")
+
+    // Compose Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Room Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+
+    // Live Data
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
+
+    // View Model
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+
+    // Data Store
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Flow Layout
+    implementation("androidx.compose.foundation:foundation:1.6.8")
+
 }
