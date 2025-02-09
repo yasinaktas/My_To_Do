@@ -1,5 +1,8 @@
 package com.yapss.my_to_do.presentation.main
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -68,7 +71,14 @@ fun BottomNavigationPart(navController: NavHostController){
 
 @Composable
 fun NavigationHostPart(navController:NavHostController,startDestination:String = Routes.ToDo.route, modifier: Modifier = Modifier){
-    NavHost(navController = navController, startDestination = startDestination){
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        enterTransition = { fadeIn(animationSpec = tween(0)) },
+        exitTransition = { fadeOut(animationSpec = tween(0)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(0)) },
+        popExitTransition = { fadeOut(animationSpec = tween(0)) }
+    ){
         composable(Routes.ToDo.route){
             ToDo()
         }
