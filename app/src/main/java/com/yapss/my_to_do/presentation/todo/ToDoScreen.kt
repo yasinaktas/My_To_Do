@@ -13,16 +13,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yapss.my_to_do.R
+import com.yapss.my_to_do.app.ThisApplication
+import com.yapss.my_to_do.app.di.ToDoViewModelFactory
+import com.yapss.my_to_do.data.model.ToDo
 import com.yapss.my_to_do.presentation._components.ComponentBottomSheet
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
 import com.yapss.my_to_do.presentation._components.ComponentCircleButton
@@ -31,6 +37,11 @@ import com.yapss.my_to_do.presentation._components.ComponentTextField
 
 @Composable
 fun ToDoScreen(modifier: Modifier = Modifier){
+    val application = LocalContext.current.applicationContext as ThisApplication
+    val viewModel:ToDoViewModel = viewModel(
+        factory = ToDoViewModelFactory(application.todoRepository)
+    )
+    val todos:List<ToDo> = viewModel._todos.observeAsState(initial = emptyList()).value
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
