@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">My To-Do</string>
     <string name="searchText">Search ...</string>
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="due_date">Due Date</string>
+    <string name="priority">Priority</string>
+    <string name="new_task">New Task</string>
+    <string name="ok">Ok</string>
+    <string name="please_fill_all_fields">Please fill all fields</string>
 </resources>

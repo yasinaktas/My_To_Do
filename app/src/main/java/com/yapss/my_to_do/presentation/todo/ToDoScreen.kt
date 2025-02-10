@@ -1,5 +1,6 @@
 package com.yapss.my_to_do.presentation.todo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,14 +42,21 @@ fun ToDoScreen(modifier: Modifier = Modifier){
     val viewModel:ToDoViewModel = viewModel(
         factory = ToDoViewModelFactory(application.todoRepository)
     )
-    val todos:List<ToDo> = viewModel._todos.observeAsState(initial = emptyList()).value
+    val todos:List<ToDo> = viewModel.todos.observeAsState(initial = emptyList()).value
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
     if(showAddSheet.value){
         ComponentBottomSheet (
             content = {
-                AddToDo(){}
+                AddToDo(
+                    dismiss = {
+                        showAddSheet.value = false
+                    },
+                    add = { todo ->
+                        viewModel.insertToDo(todo)
+                    }
+                )
             }
         ) {
             showAddSheet.value = false
@@ -62,7 +70,7 @@ fun ToDoScreen(modifier: Modifier = Modifier){
         ) {
             ComponentCardStrong {
                 Row (
-                    modifier = Modifier.fillMaxWidth().height(55.dp),
+                    modifier = Modifier.fillMaxWidth().height(55.dp).background(MaterialTheme.colorScheme.surface),
                     verticalAlignment = Alignment.CenterVertically
                 ){
 

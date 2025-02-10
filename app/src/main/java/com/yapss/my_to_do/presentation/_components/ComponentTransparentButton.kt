@@ -21,7 +21,7 @@ fun ComponentTransparentButton(text:String,click:()->Unit){
             .clip(RoundedCornerShape(4.dp))
             .clickable { click() }
             .background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f))
-            .padding(8.dp)
+            .padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
         Text(
             text = text,

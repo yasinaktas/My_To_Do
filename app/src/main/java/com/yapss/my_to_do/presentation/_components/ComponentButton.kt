@@ -31,6 +31,25 @@ fun ComponentButton(
         onClick = click,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        modifier = Modifier.padding(top = paddingTop.dp,bottom = paddingBottom.dp, start = paddingStart.dp, end = paddingEnd.dp),
+    ) {
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+@Composable
+fun ComponentButtonMaxWidth(
+    paddingTop:Int = 12,
+    paddingBottom:Int = 12,
+    paddingStart:Int = 12,
+    paddingEnd:Int = 12,label:String,click:(() -> Unit)){
+    Button(
+        onClick = click,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         modifier = Modifier.fillMaxWidth().padding(top = paddingTop.dp,bottom = paddingBottom.dp, start = paddingStart.dp, end = paddingEnd.dp),
     ) {
         Text(

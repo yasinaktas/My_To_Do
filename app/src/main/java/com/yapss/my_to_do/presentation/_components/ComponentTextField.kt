@@ -31,8 +31,7 @@ fun PreviewComponentTextField(){
 fun ComponentTextFieldOutlined(text:String,placeHolder:String,onTextChange:(String) -> Unit){
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp,top = 4.dp, bottom = 4.dp),
+            .fillMaxWidth(),
         value = text,
         singleLine = true,
         onValueChange = onTextChange,
