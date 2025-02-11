@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.yapss.my_to_do.data.model.ToDo
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
@@ -30,6 +31,6 @@ interface TodoDao {
                 AND (:status = '' OR status = :status)
         ORDER BY date DESC
            """)
-    fun getAllTodosFiltered(description:String,status:String):LiveData<List<ToDo>>
+    suspend fun getAllTodosFiltered(description:String,status:String):List<ToDo>
 
 }

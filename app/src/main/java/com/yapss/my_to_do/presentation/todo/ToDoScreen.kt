@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,11 +43,13 @@ import com.yapss.my_to_do.presentation._components.ComponentTextField
 fun ToDoScreen(modifier: Modifier = Modifier){
     val application = LocalContext.current.applicationContext as ThisApplication
     val viewModel:ToDoViewModel = viewModel(
-        factory = ToDoViewModelFactory(application.todoRepository)
+        factory = ToDoViewModelFactory(todoRepository = application.todoRepository, formatDateUseCase = application.formatDateUseCase)
     )
-    val todos:List<ToDo> = viewModel.todos.observeAsState(initial = emptyList()).value
+    //val todos:List<ToDo> = viewModel.todos.observeAsState(initial = emptyList()).value
+    val todos:List<ToDo> = viewModel.filteredTodos.collectAsState().value
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
+    val status = remember { mutableStateOf("pending") }
     val showAddSheet = remember { mutableStateOf(false) }
     if(showAddSheet.value){
         ComponentBottomSheet (
@@ -90,6 +95,7 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                             placeHolder = stringResource(R.string.searchText)
                         ) { newText ->
                             searchText.value = newText
+                            viewModel.setFilter(newText, status.value)
                         }
                     }
 
@@ -98,6 +104,7 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                     ) {
                         if(showSearchBar.value){
                             searchText.value = ""
+                            viewModel.setFilter(searchText.value, status.value)
                         }
                         showSearchBar.value = !showSearchBar.value
                     }
@@ -111,6 +118,28 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                     Spacer(modifier = Modifier.width(4.dp))
                 }
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                for(i in todos.indices){
+                    if(i == 0 || viewModel.formatDate(todos[i].date) != viewModel.formatDate(todos[i-1].date)){
+                        Text(
+                            modifier = Modifier.padding(top = 20.dp, start = 1.dp),
+                            text = viewModel.formatDate(todos[i].date),
+                            fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    ToDoListItem(todo = viewModel.convertDto(todos[i]))
+                }
+            }
+
+
         }
 
         Column(

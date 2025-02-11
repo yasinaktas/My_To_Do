@@ -19,6 +19,6 @@ class ToDoRepository(private val todoDao: TodoDao) {
 
     fun getAllTodos() = todoDao.getAllTodos()
 
-    fun getAllTodosFiltered(description:String,status:String) = todoDao.getAllTodosFiltered(description,status)
+    suspend fun getAllTodosFiltered(description:String,status:String) = todoDao.getAllTodosFiltered(description,status)
 
 }
