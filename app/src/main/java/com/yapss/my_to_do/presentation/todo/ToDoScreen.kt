@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -45,11 +46,10 @@ fun ToDoScreen(modifier: Modifier = Modifier){
     val viewModel:ToDoViewModel = viewModel(
         factory = ToDoViewModelFactory(todoRepository = application.todoRepository, formatDateUseCase = application.formatDateUseCase)
     )
-    //val todos:List<ToDo> = viewModel.todos.observeAsState(initial = emptyList()).value
     val todos:List<ToDo> = viewModel.filteredTodos.collectAsState().value
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
-    val status = remember { mutableStateOf("pending") }
+    val status = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
     if(showAddSheet.value){
         ComponentBottomSheet (
@@ -121,12 +121,8 @@ fun ToDoScreen(modifier: Modifier = Modifier){
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Column(
-                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center
-            ) {
-                for(i in todos.indices){
+            LazyColumn {
+                items(todos.size) { i ->
                     if(i == 0 || !viewModel.compareDates(todos[i-1].date, todos[i].date)){
                         Text(
                             modifier = Modifier.padding(top = 20.dp, start = 1.dp),
@@ -139,12 +135,10 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                         todo = viewModel.convertDto(todos[i]),
                         onStatusChange = {
                             viewModel.updateToDo(todos[i].copy(status = it))
-                            //viewModel.setFilter(searchText.value, status.value)
                         }
                     )
                 }
             }
-
 
         }
 

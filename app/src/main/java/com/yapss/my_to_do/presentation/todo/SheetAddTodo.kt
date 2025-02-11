@@ -189,6 +189,29 @@ fun AddToDo(dismiss:()->Unit,add:(todo:ToDo)->Unit){
             }
 
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = stringResource(R.string.tags),
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(1.0f))
+            ComponentImageButton(
+                icon = R.drawable.baseline_add_24
+            ) {
+
+            }
+        }
+
+
+
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
