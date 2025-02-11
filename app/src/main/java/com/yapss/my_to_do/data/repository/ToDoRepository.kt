@@ -2,6 +2,7 @@ package com.yapss.my_to_do.data.repository
 
 import com.yapss.my_to_do.data.dao.TodoDao
 import com.yapss.my_to_do.data.model.ToDo
+import kotlinx.coroutines.flow.Flow
 
 class ToDoRepository(private val todoDao: TodoDao) {
 
@@ -17,8 +18,8 @@ class ToDoRepository(private val todoDao: TodoDao) {
         todoDao.deleteTodo(todo)
     }
 
-    fun getAllTodos() = todoDao.getAllTodos()
+    fun getAllTodos():Flow<List<ToDo>> = todoDao.getAllTodos()
 
-    suspend fun getAllTodosFiltered(description:String,status:String) = todoDao.getAllTodosFiltered(description,status)
+    fun getAllTodosFiltered(description:String,status:String):Flow<List<ToDo>> = todoDao.getAllTodosFiltered(description,status)
 
 }

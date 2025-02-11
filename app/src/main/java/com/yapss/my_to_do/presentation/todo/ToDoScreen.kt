@@ -127,7 +127,7 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                 verticalArrangement = Arrangement.Center
             ) {
                 for(i in todos.indices){
-                    if(i == 0 || viewModel.formatDate(todos[i].date) != viewModel.formatDate(todos[i-1].date)){
+                    if(i == 0 || !viewModel.compareDates(todos[i-1].date, todos[i].date)){
                         Text(
                             modifier = Modifier.padding(top = 20.dp, start = 1.dp),
                             text = viewModel.formatDate(todos[i].date),
@@ -135,7 +135,13 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    ToDoListItem(todo = viewModel.convertDto(todos[i]))
+                    ToDoListItem(
+                        todo = viewModel.convertDto(todos[i]),
+                        onStatusChange = {
+                            viewModel.updateToDo(todos[i].copy(status = it))
+                            //viewModel.setFilter(searchText.value, status.value)
+                        }
+                    )
                 }
             }
 

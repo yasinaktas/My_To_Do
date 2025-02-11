@@ -1,6 +1,5 @@
 package com.yapss.my_to_do.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,16 +20,18 @@ interface TodoDao {
     suspend fun deleteTodo(todo:ToDo)
 
     @Query("SELECT * FROM todo ORDER BY date DESC")
-    fun getAllTodos():LiveData<List<ToDo>>
+    fun getAllTodos():Flow<List<ToDo>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * 
         FROM todo
         WHERE  
-                description LIKE '%' || :description || '%' 
+                (description LIKE '%' || :searchText || '%' OR title LIKE '%' || :searchText || '%' )
                 AND (:status = '' OR status = :status)
         ORDER BY date DESC
-           """)
-    suspend fun getAllTodosFiltered(description:String,status:String):List<ToDo>
+           """
+    )
+    fun getAllTodosFiltered(searchText:String, status:String): Flow<List<ToDo>>
 
 }
