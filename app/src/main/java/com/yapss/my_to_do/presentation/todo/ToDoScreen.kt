@@ -42,7 +42,7 @@ import com.yapss.my_to_do.presentation.todo.viewmodel.ToDoViewModel
 fun ToDoScreen(modifier: Modifier = Modifier){
     val application = LocalContext.current.applicationContext as ThisApplication
     val viewModel: ToDoViewModel = viewModel(
-        factory = ToDoViewModelFactory(todoRepository = application.todoRepository, tagRepository = application.tagRepository, formatDateUseCase = application.formatDateUseCase)
+        factory = ToDoViewModelFactory(todoRepository = application.todoRepository, tagRepository = application.tagRepository, formatDateUseCase = application.formatDateUseCase, convertToDto = application.convertToDto)
     )
     val todos:List<ToDoWithTags> = viewModel.filteredTodos.collectAsState().value
     val showSearchBar = remember { mutableStateOf(false) }
@@ -90,14 +90,17 @@ fun ToDoScreen(modifier: Modifier = Modifier){
         ) {
             ComponentCardStrong {
                 Row (
-                    modifier = Modifier.fillMaxWidth().height(55.dp).background(MaterialTheme.colorScheme.surface),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .background(MaterialTheme.colorScheme.surface),
                     verticalAlignment = Alignment.CenterVertically
                 ){
 
                     if(!showSearchBar.value){
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "My To-Do",
+                            text = stringResource(R.string.my_to_do),
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 16.sp

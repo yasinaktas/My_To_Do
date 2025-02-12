@@ -6,12 +6,11 @@ import com.yapss.my_to_do.data.model.Tag
 import com.yapss.my_to_do.data.model.ToDo
 import com.yapss.my_to_do.data.model.ToDoWithTags
 import com.yapss.my_to_do.data.model.dto.DtoFilter
-import com.yapss.my_to_do.data.model.dto.DtoTag
-import com.yapss.my_to_do.data.model.dto.DtoToDo
 import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
 import com.yapss.my_to_do.data.model.sealed.Status
 import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
+import com.yapss.my_to_do.domain.usecase.ConvertToDto
 import com.yapss.my_to_do.domain.usecase.FormatDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ToDoViewModel(val toDoRepository: ToDoRepository, val tagRepository: TagRepository, val formatDateUseCase: FormatDateUseCase):ViewModel() {
+class ToDoViewModel(
+    val toDoRepository: ToDoRepository,
+    val tagRepository: TagRepository,
+    val formatDateUseCase: FormatDateUseCase,
+    val convertToDto: ConvertToDto
+):ViewModel() {
 
     fun insertToDo(todo:ToDo){
         viewModelScope.launch {
@@ -77,18 +81,7 @@ class ToDoViewModel(val toDoRepository: ToDoRepository, val tagRepository: TagRe
     }
 
     fun convertDto(todoWithTags:ToDoWithTags):DtoToDoWithTags{
-        return DtoToDoWithTags(
-            todo = DtoToDo(
-                title = todoWithTags.todo.title,
-                description = todoWithTags.todo.description,
-                dueDate = todoWithTags.todo.dueDate,
-                dueDateString = if(todoWithTags.todo.dueDate == null) null else formatDateUseCase.formatFullDate(todoWithTags.todo.dueDate),
-                priority = todoWithTags.todo.priority,
-                status = todoWithTags.todo.status,
-                date = todoWithTags.todo.date
-            ),
-            tags = todoWithTags.tags.map { tag -> DtoTag(name = tag.name) }
-        )
+        return convertToDto.toDoWithTagsToDto(todoWithTags)
     }
 
     fun insertTag(tag: Tag){

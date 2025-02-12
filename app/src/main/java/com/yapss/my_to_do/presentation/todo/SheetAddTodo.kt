@@ -165,7 +165,8 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
                                 priority = priorityNumber.intValue,
                                 status = Status.Pending.status,
                                 dueDate = if(selectedDueDate.value.isNotEmpty()) selectedDueDateMillis.longValue else null,
-                                dueDateString = null
+                                dueDateString = selectedDueDate.value.ifEmpty { null },
+                                dateString = selectedDate.value
                             ),
                             tags = tags.value.map { tag -> DtoTag(name = tag) }
                         )

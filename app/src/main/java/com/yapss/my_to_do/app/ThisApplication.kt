@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.yapss.my_to_do.data.database.ToDoDatabase
 import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
+import com.yapss.my_to_do.domain.usecase.ConvertToDto
 import com.yapss.my_to_do.domain.usecase.FormatDateUseCase
 
 class ThisApplication: Application() {
@@ -15,6 +16,7 @@ class ThisApplication: Application() {
     lateinit var todoRepository:ToDoRepository
     lateinit var formatDateUseCase:FormatDateUseCase
     lateinit var tagRepository: TagRepository
+    lateinit var convertToDto: ConvertToDto
 
     override fun onCreate() {
         super.onCreate()
@@ -22,6 +24,7 @@ class ThisApplication: Application() {
         todoRepository = ToDoRepository(todoDatabase.todoDao())
         formatDateUseCase = FormatDateUseCase()
         tagRepository = TagRepository(todoDatabase.tagDao())
+        convertToDto = ConvertToDto()
 
     }
 

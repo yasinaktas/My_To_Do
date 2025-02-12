@@ -7,5 +7,6 @@ data class DtoToDo(
     val dueDate:Long?,
     val priority:Int,
     val status:String,
-    val date:Long
+    val date:Long,
+    val dateString:String
 )

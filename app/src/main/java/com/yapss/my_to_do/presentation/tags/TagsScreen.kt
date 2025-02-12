@@ -10,18 +10,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yapss.my_to_do.app.ThisApplication
+import com.yapss.my_to_do.app.di.TagViewModelFactory
+import com.yapss.my_to_do.data.model.TagWithToDos
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
+import com.yapss.my_to_do.presentation.tags.viewmodel.TagViewModel
 
 @Composable
 fun TagsScreen(modifier: Modifier = Modifier){
+    val application = LocalContext.current.applicationContext as ThisApplication
+    val viewModel:TagViewModel = viewModel(
+        factory = TagViewModelFactory(
+            tagRepository = application.tagRepository,
+            formatDateUseCase = application.formatDateUseCase,
+            convertToDto = application.convertToDto,
+            todoRepository = application.todoRepository
+        )
+    )
+    val tagsWithTodos:List<TagWithToDos> = viewModel.tagsWithToDos.collectAsState().value
     Box (modifier = modifier){
         Column(
             modifier = Modifier
@@ -44,6 +62,17 @@ fun TagsScreen(modifier: Modifier = Modifier){
                     Spacer(modifier = Modifier.weight(1.0f))
 
                 }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn {
+                items(tagsWithTodos.size){ i ->
+                    TagListItem(tagWithToDos = viewModel.tagWithToDosToDto(tagsWithTodos[i])){index,status->
+                        viewModel.updateToDoStatus(tagsWithTodos[i].todos[index], newStatus = status)
+                    }
+                }
+
             }
         }
     }

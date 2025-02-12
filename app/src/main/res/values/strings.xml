@@ -24,5 +24,6 @@
     <string name="status_finished_text">Completed</string>
     <string name="status_all">all</string>
     <string name="status_all_text">All</string>
+    <string name="my_to_do">My To-Do</string>
 
 </resources>
