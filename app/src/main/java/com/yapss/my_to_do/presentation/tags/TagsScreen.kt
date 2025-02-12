@@ -1,5 +1,6 @@
 package com.yapss.my_to_do.presentation.tags
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,7 @@ fun TagsScreen(modifier: Modifier = Modifier){
         ) {
             ComponentCardStrong {
                 Row (
-                    modifier = Modifier.fillMaxWidth().height(55.dp),
+                    modifier = Modifier.fillMaxWidth().height(55.dp).background(MaterialTheme.colorScheme.surface),
                     verticalAlignment = Alignment.CenterVertically
                 ){
 

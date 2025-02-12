@@ -1,16 +1,28 @@
 <resources>
     <string name="app_name">My To-Do</string>
-    <string name="searchText">Search ...</string>
+    <string name="searchText">Search …</string>
     <string name="save">Save</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="due_date">Due Date</string>
     <string name="priority">Priority</string>
     <string name="new_task">New Task</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="please_fill_all_fields">Please fill all fields</string>
     <string name="tags">Tags</string>
     <string name="add">Add</string>
     <string name="tag">Tag</string>
     <string name="new_tag">New Tag</string>
+    <string name="date">Date</string>
+    <string name="apply">Apply</string>
+    <string name="filter">Filter</string>
+    <string name="status_pending">pending</string>
+    <string name="status_started">started</string>
+    <string name="status_finished">finished</string>
+    <string name="status_pending_text">Pending</string>
+    <string name="status_started_text">Started</string>
+    <string name="status_finished_text">Completed</string>
+    <string name="status_all">all</string>
+    <string name="status_all_text">All</string>
+
 </resources>

@@ -41,6 +41,7 @@ import com.yapss.my_to_do.R
 import com.yapss.my_to_do.data.model.dto.DtoTag
 import com.yapss.my_to_do.data.model.dto.DtoToDo
 import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
+import com.yapss.my_to_do.data.model.sealed.Status
 import com.yapss.my_to_do.presentation._components.ComponentBottomSheet
 import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation._components.ComponentTextFieldOutlined
@@ -56,9 +57,12 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
     val context = LocalContext.current
     val titleText = remember { mutableStateOf("") }
     val descriptionText = remember { mutableStateOf("") }
-    val selectedDate = remember { mutableStateOf("") }
-    val selectedDateMillis = remember { mutableLongStateOf(0L) }
+    val selectedDate = remember { mutableStateOf(SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date().time)) }
+    val selectedDateMillis = remember { mutableLongStateOf(Date().time) }
     val openDatePicker = remember { mutableStateOf(false) }
+    val selectedDueDate = remember { mutableStateOf("") }
+    val selectedDueDateMillis = remember { mutableLongStateOf(0L) }
+    val openDueDatePicker = remember { mutableStateOf(false) }
     val priorityNumber = remember { mutableIntStateOf(1) }
     val openAddTag = remember { mutableStateOf(false) }
     val tags = remember { mutableStateOf(listOf<String>()) }
@@ -81,11 +85,37 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
 
             val selectedMillis = datePickerState.selectedDateMillis
             selectedDate.value = if (selectedMillis != null) {
-                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(selectedMillis))
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date(selectedMillis))
             } else {
-                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date())
             }
             selectedDateMillis.longValue = selectedMillis ?: Date().time
+        }
+    }
+
+    if (openDueDatePicker.value) {
+        DatePickerDialog(
+            onDismissRequest = { openDueDatePicker.value = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        openDueDatePicker.value = false
+                    }
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            }
+        ) {
+            val datePickerState = rememberDatePickerState()
+            DatePicker(state = datePickerState)
+
+            val selectedMillis = datePickerState.selectedDateMillis
+            selectedDueDate.value = if (selectedMillis != null) {
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date(selectedMillis))
+            } else {
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date())
+            }
+            selectedDueDateMillis.longValue = selectedMillis ?: Date().time
         }
     }
 
@@ -131,10 +161,10 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
                             todo = DtoToDo(
                                 title = titleText.value,
                                 description = descriptionText.value,
-                                date = Date().time,
+                                date = selectedDateMillis.longValue,
                                 priority = priorityNumber.intValue,
-                                status = "pending",
-                                dueDate = if(selectedDate.value.isNotEmpty()) selectedDateMillis.value else null,
+                                status = Status.Pending.status,
+                                dueDate = if(selectedDueDate.value.isNotEmpty()) selectedDueDateMillis.longValue else null,
                                 dueDateString = null
                             ),
                             tags = tags.value.map { tag -> DtoTag(name = tag) }
@@ -166,19 +196,49 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
+                text = stringResource(R.string.date),
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(1.0f))
+            AssistChip(
+                onClick = {
+
+                },
+                label = {
+                    Text(selectedDate.value)
+                }
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            ComponentImageButton(
+                icon = R.drawable.outline_calendar_month_24
+            ) {
+                openDatePicker.value = true
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
                 text = stringResource(R.string.due_date),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.weight(1.0f))
-            if(selectedDate.value.isNotEmpty()){
+            if(selectedDueDate.value.isNotEmpty()){
                 AssistChip(
                     onClick = {
 
                     },
                     label = {
-                        Text(selectedDate.value)
+                        Text(selectedDueDate.value)
                     },
                     trailingIcon = {
                         Icon(
@@ -186,7 +246,7 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
                             contentDescription = "Due Date",
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.clickable {
-                                selectedDate.value = ""
+                                selectedDueDate.value = ""
                             }
                         )
                     }
@@ -196,7 +256,7 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
             ComponentImageButton(
                 icon = R.drawable.outline_calendar_month_24
             ) {
-                openDatePicker.value = true
+                openDueDatePicker.value = true
             }
 
         }
@@ -243,7 +303,9 @@ fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
         }
 
         Row (
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
             verticalAlignment = Alignment.CenterVertically
         ){
             for (tag in tags.value){

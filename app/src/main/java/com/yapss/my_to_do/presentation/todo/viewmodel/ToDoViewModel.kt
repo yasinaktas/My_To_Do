@@ -1,13 +1,15 @@
-package com.yapss.my_to_do.presentation.todo
+package com.yapss.my_to_do.presentation.todo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapss.my_to_do.data.model.Tag
 import com.yapss.my_to_do.data.model.ToDo
 import com.yapss.my_to_do.data.model.ToDoWithTags
+import com.yapss.my_to_do.data.model.dto.DtoFilter
 import com.yapss.my_to_do.data.model.dto.DtoTag
 import com.yapss.my_to_do.data.model.dto.DtoToDo
 import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
+import com.yapss.my_to_do.data.model.sealed.Status
 import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
 import com.yapss.my_to_do.domain.usecase.FormatDateUseCase
@@ -109,6 +111,17 @@ class ToDoViewModel(val toDoRepository: ToDoRepository, val tagRepository: TagRe
                 tagRepository.insertTag(Tag(name = tag.name, todoId = todoId))
             }
         }
+    }
+
+    private var filter:DtoFilter = DtoFilter(status = Status.All)
+
+    fun getFilter():DtoFilter{
+        return filter
+    }
+
+    fun setFilterStatus(status:Status){
+        this.filter.status = status
+        setFilter(description = _description.value, status = if(status == Status.All) "" else status.status)
     }
 
 }

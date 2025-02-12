@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,18 +30,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yapss.my_to_do.R
 import com.yapss.my_to_do.app.ThisApplication
 import com.yapss.my_to_do.app.di.ToDoViewModelFactory
-import com.yapss.my_to_do.data.model.ToDo
 import com.yapss.my_to_do.data.model.ToDoWithTags
 import com.yapss.my_to_do.presentation._components.ComponentBottomSheet
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
 import com.yapss.my_to_do.presentation._components.ComponentCircleButton
 import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation._components.ComponentTextField
+import com.yapss.my_to_do.presentation.todo.viewmodel.ToDoViewModel
 
 @Composable
 fun ToDoScreen(modifier: Modifier = Modifier){
     val application = LocalContext.current.applicationContext as ThisApplication
-    val viewModel:ToDoViewModel = viewModel(
+    val viewModel: ToDoViewModel = viewModel(
         factory = ToDoViewModelFactory(todoRepository = application.todoRepository, tagRepository = application.tagRepository, formatDateUseCase = application.formatDateUseCase)
     )
     val todos:List<ToDoWithTags> = viewModel.filteredTodos.collectAsState().value
@@ -52,6 +49,23 @@ fun ToDoScreen(modifier: Modifier = Modifier){
     val searchText = remember { mutableStateOf("") }
     val status = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
+    val showFilterSheet = remember { mutableStateOf(false) }
+    if(showFilterSheet.value){
+        ComponentBottomSheet (
+            content = {
+                FilterSheet(
+                    dismiss = {
+                        showFilterSheet.value = false
+                    },
+                    filter = viewModel.getFilter()
+                ) { dtoFilter ->
+                    viewModel.setFilterStatus(dtoFilter.status)
+                }
+            }
+        ) {
+            showFilterSheet.value = false
+        }
+    }
     if(showAddSheet.value){
         ComponentBottomSheet (
             content = {
@@ -113,7 +127,7 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                     ComponentImageButton(
                         icon = R.drawable.baseline_filter_list_24
                     ) {
-
+                        showFilterSheet.value = true
                     }
 
                     Spacer(modifier = Modifier.width(4.dp))

@@ -22,22 +22,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.yapss.my_to_do.R
+import com.yapss.my_to_do.data.model.sealed.Routes
 import com.yapss.my_to_do.presentation.calendar.CalendarScreen
 import com.yapss.my_to_do.presentation.profile.ProfileScreen
 import com.yapss.my_to_do.presentation.tags.TagsScreen
 import com.yapss.my_to_do.presentation.todo.ToDoScreen
 
-sealed class Routes(val route:String, val iconPassive: Int, val iconActive:Int, val label:String){
-    data object ToDo: Routes("To Do", R.drawable.outline_check_box_outline_blank_24, R.drawable.outline_check_box_24,"To Do")
-    data object Calendar: Routes("Calendar", R.drawable.outline_calendar_today_24, R.drawable.outline_calendar_month_24 ,"Calendar")
-    data object Tags: Routes("Tags", R.drawable.outline_folder_24, R.drawable.outline_folder_special_24,"Tags")
-    data object Profile: Routes("Profile", R.drawable.baseline_person_pin_24, R.drawable.baseline_person_pin_24,"Profile")
-}
-
 @Composable
 fun BottomNavigationPart(navController: NavHostController){
-    val routes = listOf<Routes>(Routes.ToDo, Routes.Calendar, Routes.Tags, Routes.Profile)
+    val routes = listOf(Routes.ToDo, Routes.Calendar, Routes.Tags, Routes.Profile)
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry.value?.destination?.route
     BottomAppBar (

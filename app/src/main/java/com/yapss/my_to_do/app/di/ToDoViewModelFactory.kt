@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
 import com.yapss.my_to_do.domain.usecase.FormatDateUseCase
-import com.yapss.my_to_do.presentation.todo.ToDoViewModel
+import com.yapss.my_to_do.presentation.todo.viewmodel.ToDoViewModel
 
 class ToDoViewModelFactory(
     private val todoRepository: ToDoRepository,
