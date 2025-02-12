@@ -34,6 +34,7 @@ import com.yapss.my_to_do.R
 import com.yapss.my_to_do.app.ThisApplication
 import com.yapss.my_to_do.app.di.ToDoViewModelFactory
 import com.yapss.my_to_do.data.model.ToDo
+import com.yapss.my_to_do.data.model.ToDoWithTags
 import com.yapss.my_to_do.presentation._components.ComponentBottomSheet
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
 import com.yapss.my_to_do.presentation._components.ComponentCircleButton
@@ -44,9 +45,9 @@ import com.yapss.my_to_do.presentation._components.ComponentTextField
 fun ToDoScreen(modifier: Modifier = Modifier){
     val application = LocalContext.current.applicationContext as ThisApplication
     val viewModel:ToDoViewModel = viewModel(
-        factory = ToDoViewModelFactory(todoRepository = application.todoRepository, formatDateUseCase = application.formatDateUseCase)
+        factory = ToDoViewModelFactory(todoRepository = application.todoRepository, tagRepository = application.tagRepository, formatDateUseCase = application.formatDateUseCase)
     )
-    val todos:List<ToDo> = viewModel.filteredTodos.collectAsState().value
+    val todos:List<ToDoWithTags> = viewModel.filteredTodos.collectAsState().value
     val showSearchBar = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val status = remember { mutableStateOf("") }
@@ -58,8 +59,8 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                     dismiss = {
                         showAddSheet.value = false
                     },
-                    add = { todo ->
-                        viewModel.insertToDo(todo)
+                    add = { todoWithTags ->
+                        viewModel.insertToDoWithTags(todoWithTags)
                     }
                 )
             }
@@ -123,18 +124,18 @@ fun ToDoScreen(modifier: Modifier = Modifier){
 
             LazyColumn {
                 items(todos.size) { i ->
-                    if(i == 0 || !viewModel.compareDates(todos[i-1].date, todos[i].date)){
+                    if(i == 0 || !viewModel.compareDates(todos[i-1].todo.date, todos[i].todo.date)){
                         Text(
                             modifier = Modifier.padding(top = 20.dp, start = 1.dp),
-                            text = viewModel.formatDate(todos[i].date),
+                            text = viewModel.formatDate(todos[i].todo.date),
                             fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     ToDoListItem(
-                        todo = viewModel.convertDto(todos[i]),
+                        todoWithTags = viewModel.convertDto(todos[i]),
                         onStatusChange = {
-                            viewModel.updateToDo(todos[i].copy(status = it))
+                            viewModel.updateToDo(todos[i].todo.copy(status = it))
                         }
                     )
                 }

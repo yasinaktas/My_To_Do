@@ -4,14 +4,16 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.yapss.my_to_do.data.model.ToDo
+import com.yapss.my_to_do.data.model.ToDoWithTags
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
     @Insert
-    suspend fun insertTodo(todo:ToDo)
+    suspend fun insertTodo(todo:ToDo):Long
 
     @Update
     suspend fun updateTodo(todo:ToDo)
@@ -22,6 +24,7 @@ interface TodoDao {
     @Query("SELECT * FROM todo ORDER BY date DESC")
     fun getAllTodos():Flow<List<ToDo>>
 
+    @Transaction
     @Query(
         """
         SELECT * 
@@ -32,6 +35,6 @@ interface TodoDao {
         ORDER BY date DESC
            """
     )
-    fun getAllTodosFiltered(searchText:String, status:String): Flow<List<ToDo>>
+    fun getAllTodosFiltered(searchText:String, status:String): Flow<List<ToDoWithTags>>
 
 }

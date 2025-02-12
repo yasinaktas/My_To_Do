@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,44 +28,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapss.my_to_do.R
+import com.yapss.my_to_do.data.model.dto.DtoTag
 import com.yapss.my_to_do.data.model.dto.DtoToDo
+import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
 import com.yapss.my_to_do.presentation._components.ComponentCard
 import com.yapss.my_to_do.presentation._components.FilledOutlinedRectangle
 import com.yapss.my_to_do.presentation._components.RoundedOutlinedRectangle
+import java.util.Date
 
 @Composable
-fun ToDoListItem(todo: DtoToDo,onStatusChange:(status:String)->Unit){
+fun ToDoListItem(todoWithTags: DtoToDoWithTags,onStatusChange:(status:String)->Unit){
     Column(
         modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(vertical = 8.dp)
     ) {
-        /*Row {
-            Spacer(modifier = Modifier.weight(1.0f))
-            Text(
-                text = formatDateUseCase.formatTime(todo.date),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                modifier = Modifier.padding(4.dp)
-            )
-        }*/
         ComponentCard(content = {
             Row(
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(vertical = 12.dp, horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp).background(MaterialTheme.colorScheme.surface).padding(vertical = 12.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.Top
             ) {
                 Column(
-                    modifier = Modifier.width(30.dp),
+                    modifier = Modifier.width(30.dp).padding(top = 4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
-                    for(i in 0..<5-todo.priority){
+                    for(i in 0..<5-todoWithTags.todo.priority){
                         RoundedOutlinedRectangle(20,20)
                     }
-                    for(i in 0..<todo.priority){
+                    for(i in 0..<todoWithTags.todo.priority){
                         FilledOutlinedRectangle(20,20)
                     }
                 }
                 Column(
-                    modifier = Modifier.weight(1.0f).heightIn(min = 100.dp),
+                    modifier = Modifier.weight(1.0f),
                     verticalArrangement = Arrangement.Top
                 ) {
                     Row(
@@ -71,7 +67,7 @@ fun ToDoListItem(todo: DtoToDo,onStatusChange:(status:String)->Unit){
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = todo.title,
+                            text = todoWithTags.todo.title,
                             fontSize = 16.sp,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
@@ -87,18 +83,18 @@ fun ToDoListItem(todo: DtoToDo,onStatusChange:(status:String)->Unit){
                                     color = MaterialTheme.colorScheme.onSurface,
                                     width = 1.dp
                                 ).clickable {
-                                    onStatusChange(if(todo.status == "pending") "started" else if(todo.status == "started") "finished" else "pending")
+                                    onStatusChange(if(todoWithTags.todo.status == "pending") "started" else if(todoWithTags.todo.status == "started") "finished" else "pending")
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            if(todo.status == "started"){
+                            if(todoWithTags.todo.status == "started"){
                                 Icon(
                                     painter = painterResource(R.drawable.round_hourglass_bottom_24),
                                     contentDescription = "Started",
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(20.dp)
                                 )
-                            }else if(todo.status == "finished"){
+                            }else if(todoWithTags.todo.status == "finished"){
                                 Icon(
                                     painter = painterResource(R.drawable.baseline_check_24),
                                     contentDescription = "Started",
@@ -110,21 +106,39 @@ fun ToDoListItem(todo: DtoToDo,onStatusChange:(status:String)->Unit){
                     }
 
                     Text(
-                        text = todo.description,
+                        text = todoWithTags.todo.description,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         modifier = Modifier.padding(4.dp)
                     )
+
+
+                    LazyRow {
+                        items(todoWithTags.tags.size) { i ->
+                            Spacer(modifier = Modifier.width(4.dp))
+                            AssistChip(
+                                onClick = {},
+                                label = {
+                                    Text(
+                                        text = todoWithTags.tags[i].name,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                        }
+                    }
                 }
 
             }
         })
 
-        if(todo.dueDate.isNotEmpty()){
+        if(todoWithTags.todo.dueDate != null){
             Row {
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
-                    text = "Due ${todo.dueDate}",
+                    text = "Due ${todoWithTags.todo.dueDateString}",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     modifier = Modifier.padding(4.dp)
@@ -137,5 +151,18 @@ fun ToDoListItem(todo: DtoToDo,onStatusChange:(status:String)->Unit){
 @Preview
 @Composable
 fun PreviewToDoListItem(){
-    ToDoListItem(DtoToDo(title = "Deneme deneme deneme deneme deneme abc", description = "Deneme açıklama uzun mu uzun", dueDate = "12 Şubat 2025", priority = 1, status = "finished", date = "12 Şubat 2024"), onStatusChange = {})
+    ToDoListItem(
+        DtoToDoWithTags(
+            todo = DtoToDo(
+                title = "Deneme deneme deneme deneme deneme abc",
+                description = "Deneme açıklama uzun mu uzun",
+                dueDateString = "12 Şubat 2025",
+                dueDate = Date().time,
+                priority = 1,
+                status = "finished",
+                date = Date().time
+            ),
+            tags = listOf(DtoTag("Tag1"),DtoTag("Tag2"),DtoTag("Tag3"))
+        ),
+        onStatusChange = {})
 }

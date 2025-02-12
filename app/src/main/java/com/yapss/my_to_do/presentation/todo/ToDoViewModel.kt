@@ -2,8 +2,13 @@ package com.yapss.my_to_do.presentation.todo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapss.my_to_do.data.model.Tag
 import com.yapss.my_to_do.data.model.ToDo
+import com.yapss.my_to_do.data.model.ToDoWithTags
+import com.yapss.my_to_do.data.model.dto.DtoTag
 import com.yapss.my_to_do.data.model.dto.DtoToDo
+import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
+import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
 import com.yapss.my_to_do.domain.usecase.FormatDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ToDoViewModel(val toDoRepository: ToDoRepository, val formatDateUseCase: FormatDateUseCase):ViewModel() {
+class ToDoViewModel(val toDoRepository: ToDoRepository, val tagRepository: TagRepository, val formatDateUseCase: FormatDateUseCase):ViewModel() {
 
     fun insertToDo(todo:ToDo){
         viewModelScope.launch {
@@ -34,7 +39,7 @@ class ToDoViewModel(val toDoRepository: ToDoRepository, val formatDateUseCase: F
     private val _status = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val filteredTodos: StateFlow<List<ToDo>> =
+    val filteredTodos: StateFlow<List<ToDoWithTags>> =
         _description.combine(_status) { description, status ->
             description to status
         }
@@ -53,6 +58,10 @@ class ToDoViewModel(val toDoRepository: ToDoRepository, val formatDateUseCase: F
         return formatDateUseCase.formatFullDate(timestamp)
     }
 
+    fun parseDate(date:String):Long{
+        return formatDateUseCase.parseDate(date)
+    }
+
     fun formatTime(timestamp:Long):String{
         return formatDateUseCase.formatTime(timestamp)
     }
@@ -65,10 +74,41 @@ class ToDoViewModel(val toDoRepository: ToDoRepository, val formatDateUseCase: F
         return formatDate(date1) == formatDate(date2)
     }
 
-    private fun ToDo.toDto() = DtoToDo(title = title, description = description, dueDate = if(dueDate == null)"" else formatDate(dueDate), priority = priority, status = status, date = formatDateTime(date))
+    fun convertDto(todoWithTags:ToDoWithTags):DtoToDoWithTags{
+        return DtoToDoWithTags(
+            todo = DtoToDo(
+                title = todoWithTags.todo.title,
+                description = todoWithTags.todo.description,
+                dueDate = todoWithTags.todo.dueDate,
+                dueDateString = if(todoWithTags.todo.dueDate == null) null else formatDateUseCase.formatFullDate(todoWithTags.todo.dueDate),
+                priority = todoWithTags.todo.priority,
+                status = todoWithTags.todo.status,
+                date = todoWithTags.todo.date
+            ),
+            tags = todoWithTags.tags.map { tag -> DtoTag(name = tag.name) }
+        )
+    }
 
-    fun convertDto(todo:ToDo):DtoToDo{
-        return todo.toDto()
+    fun insertTag(tag: Tag){
+        viewModelScope.launch {
+            tagRepository.insertTag(tag)
+        }
+    }
+
+    fun insertToDoWithTags(todoWithTags: DtoToDoWithTags){
+        viewModelScope.launch {
+            val todoId:Long = toDoRepository.insert(todo = ToDo(
+                title = todoWithTags.todo.title,
+                description = todoWithTags.todo.description,
+                dueDate = todoWithTags.todo.dueDate,
+                priority = todoWithTags.todo.priority,
+                status = todoWithTags.todo.status,
+                date = todoWithTags.todo.date
+            ))
+            for(tag in todoWithTags.tags){
+                tagRepository.insertTag(Tag(name = tag.name, todoId = todoId))
+            }
+        }
     }
 
 }

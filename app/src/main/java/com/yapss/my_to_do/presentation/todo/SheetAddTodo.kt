@@ -3,6 +3,7 @@ package com.yapss.my_to_do.presentation.todo
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -23,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,23 +38,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapss.my_to_do.R
-import com.yapss.my_to_do.data.model.ToDo
+import com.yapss.my_to_do.data.model.dto.DtoTag
+import com.yapss.my_to_do.data.model.dto.DtoToDo
+import com.yapss.my_to_do.data.model.dto.DtoToDoWithTags
+import com.yapss.my_to_do.presentation._components.ComponentBottomSheet
 import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation._components.ComponentTextFieldOutlined
 import com.yapss.my_to_do.presentation._components.ComponentTransparentButton
+import com.yapss.my_to_do.presentation.tags.AddTag
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToDo(dismiss:()->Unit,add:(todo:ToDo)->Unit){
+fun AddToDo(dismiss:()->Unit,add:(todoWithTags: DtoToDoWithTags)->Unit){
     val context = LocalContext.current
     val titleText = remember { mutableStateOf("") }
     val descriptionText = remember { mutableStateOf("") }
     val selectedDate = remember { mutableStateOf("") }
+    val selectedDateMillis = remember { mutableLongStateOf(0L) }
     val openDatePicker = remember { mutableStateOf(false) }
     val priorityNumber = remember { mutableIntStateOf(1) }
+    val openAddTag = remember { mutableStateOf(false) }
+    val tags = remember { mutableStateOf(listOf<String>()) }
 
     if (openDatePicker.value) {
         DatePickerDialog(
@@ -75,6 +85,22 @@ fun AddToDo(dismiss:()->Unit,add:(todo:ToDo)->Unit){
             } else {
                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
             }
+            selectedDateMillis.longValue = selectedMillis ?: Date().time
+        }
+    }
+
+
+    if(openAddTag.value){
+        ComponentBottomSheet (
+            content = {
+                AddTag(dismiss = {
+                    openAddTag.value = false
+                }){
+                    tags.value += it
+                }
+            }
+        ) {
+            openAddTag.value = false
         }
     }
 
@@ -100,13 +126,19 @@ fun AddToDo(dismiss:()->Unit,add:(todo:ToDo)->Unit){
             Spacer(modifier = Modifier.weight(1.0f))
             ComponentTransparentButton(stringResource(R.string.save)) {
                 if(titleText.value.isNotEmpty() && descriptionText.value.isNotEmpty()){
-                    add(ToDo(
-                        title = titleText.value,
-                        description = descriptionText.value,
-                        date = Date().time,
-                        priority = priorityNumber.intValue,
-                        status = "pending",
-                        dueDate = if(selectedDate.value.isNotEmpty()) Date().time else null)
+                    add(
+                        DtoToDoWithTags(
+                            todo = DtoToDo(
+                                title = titleText.value,
+                                description = descriptionText.value,
+                                date = Date().time,
+                                priority = priorityNumber.intValue,
+                                status = "pending",
+                                dueDate = if(selectedDate.value.isNotEmpty()) selectedDateMillis.value else null,
+                                dueDateString = null
+                            ),
+                            tags = tags.value.map { tag -> DtoTag(name = tag) }
+                        )
                     )
                     dismiss()
                 }else{
@@ -206,10 +238,34 @@ fun AddToDo(dismiss:()->Unit,add:(todo:ToDo)->Unit){
             ComponentImageButton(
                 icon = R.drawable.baseline_add_24
             ) {
-
+                openAddTag.value = true
             }
         }
 
+        Row (
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            for (tag in tags.value){
+                AssistChip(
+                    onClick = {},
+                    label = {
+                        Text(tag)
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_close_24),
+                            contentDescription = "Remove Tag",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.clickable {
+                                tags.value = tags.value.filter { it != tag }
+                            }
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+            }
+        }
 
 
         Spacer(modifier = Modifier.height(24.dp))

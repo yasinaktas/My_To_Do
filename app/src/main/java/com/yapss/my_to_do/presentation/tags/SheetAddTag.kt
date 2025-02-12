@@ -23,10 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapss.my_to_do.R
-import com.yapss.my_to_do.data.model.ToDo
 import com.yapss.my_to_do.presentation._components.ComponentTextFieldOutlined
 import com.yapss.my_to_do.presentation._components.ComponentTransparentButton
-import java.util.Date
 
 @Composable
 fun AddTag(dismiss:()->Unit, addTag:(tag:String)->Unit){
@@ -46,7 +44,7 @@ fun AddTag(dismiss:()->Unit, addTag:(tag:String)->Unit){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.new_task),
+                text = stringResource(R.string.new_tag),
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
