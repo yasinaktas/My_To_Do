@@ -1,13 +1,9 @@
 package com.yapss.my_to_do.presentation.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,12 +43,8 @@ import com.yapss.my_to_do.presentation._components.ComponentCard
 import com.yapss.my_to_do.presentation._components.ComponentCardStrong
 import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation.calendar.viewmodel.CalendarViewModel
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

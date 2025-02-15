@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.yapss.my_to_do.api.client.ApiClient
 import com.yapss.my_to_do.data.database.ToDoDatabase
 import com.yapss.my_to_do.data.repository.TagRepository
 import com.yapss.my_to_do.data.repository.ToDoRepository
@@ -17,6 +18,7 @@ class ThisApplication: Application() {
     lateinit var formatDateUseCase:FormatDateUseCase
     lateinit var tagRepository: TagRepository
     lateinit var convertToDto: ConvertToDto
+    lateinit var apiClient:ApiClient
 
     override fun onCreate() {
         super.onCreate()
@@ -25,6 +27,7 @@ class ThisApplication: Application() {
         formatDateUseCase = FormatDateUseCase()
         tagRepository = TagRepository(todoDatabase.tagDao())
         convertToDto = ConvertToDto()
+        apiClient = ApiClient
 
     }
 
