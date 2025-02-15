@@ -13,14 +13,15 @@ fun ComponentCard(
     content: @Composable () -> Unit,
     tonalElevation:Double = 0.5,
     shadowElevation:Double = 2.0,
-    radius:Int = 8
+    radius:Int = 8,
+    modifier:Modifier = Modifier.clickable {  }
 ){
     Surface(
         tonalElevation = tonalElevation.dp,
         shadowElevation = shadowElevation.dp,
         shape = RoundedCornerShape(radius.dp),
         color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.clickable {  }
+        modifier = modifier
     ) {
         content()
     }

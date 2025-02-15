@@ -25,5 +25,16 @@
     <string name="status_all">all</string>
     <string name="status_all_text">All</string>
     <string name="my_to_do">My To-Do</string>
+    <string name="due">Due %1$s</string>
+
+    <string-array name="weekdays">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
 
 </resources>

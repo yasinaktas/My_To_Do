@@ -57,7 +57,7 @@ fun TagListItem(tagWithToDos: DtoTagWithToDos,onStatusChange:(index:Int,status:S
                     modifier = Modifier.weight(1.0f)
                 )
                 Text(
-                    text = tagWithToDos.todos.size.toString(),
+                    text = "(${tagWithToDos.todos.size})",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 )

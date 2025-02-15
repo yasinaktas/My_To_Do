@@ -12,6 +12,11 @@ class FormatDateUseCase {
         return sdf.format(Date(timestamp))
     }
 
+    fun formatMonthYear(timestamp: Long): String {
+        val sdf = SimpleDateFormat("MMMM yyyy", locale)
+        return sdf.format(Date(timestamp))
+    }
+
     fun parseDate(date:String):Long{
         val sdf = SimpleDateFormat("dd MMMM yyyy", locale)
         return sdf.parse(date)!!.time

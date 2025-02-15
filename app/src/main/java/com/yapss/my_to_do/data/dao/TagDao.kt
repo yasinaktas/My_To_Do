@@ -32,7 +32,7 @@ interface TagDao {
         INNER JOIN tags ON todo.id = tags.todo_id
         WHERE tags.name = :tagName
     """)
-    suspend fun getToDosByTagNameFlow(tagName: String): List<ToDo>
+    fun getToDosByTagNameFlow(tagName: String): Flow<List<ToDo>>
 
 
 }
