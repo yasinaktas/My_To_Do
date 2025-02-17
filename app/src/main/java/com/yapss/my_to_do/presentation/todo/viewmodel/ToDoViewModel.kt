@@ -41,6 +41,27 @@ class ToDoViewModel(
 
     }
 
+    fun deleteToDo(todo:ToDo){
+        viewModelScope.launch {
+            toDoRepository.delete(todo)
+        }
+    }
+
+    fun deleteTag(tag:Tag){
+        viewModelScope.launch {
+            tagRepository.deleteTag(tag)
+        }
+    }
+
+    fun deleteTodoWithTags(todoWithTags:ToDoWithTags){
+        viewModelScope.launch {
+            for (tag in todoWithTags.tags) {
+                deleteTag(tag)
+            }
+            deleteToDo(todoWithTags.todo)
+        }
+    }
+
     private val _description = MutableStateFlow("")
     private val _status = MutableStateFlow("")
 

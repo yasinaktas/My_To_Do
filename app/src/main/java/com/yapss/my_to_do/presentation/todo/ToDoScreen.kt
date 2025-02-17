@@ -12,12 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +43,7 @@ import com.yapss.my_to_do.presentation._components.ComponentCircleButton
 import com.yapss.my_to_do.presentation._components.ComponentImageButton
 import com.yapss.my_to_do.presentation._components.ComponentTextField
 import com.yapss.my_to_do.presentation.todo.viewmodel.ToDoViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToDoScreen(modifier: Modifier = Modifier){
@@ -50,6 +57,8 @@ fun ToDoScreen(modifier: Modifier = Modifier){
     val status = remember { mutableStateOf("") }
     val showAddSheet = remember { mutableStateOf(false) }
     val showFilterSheet = remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     if(showFilterSheet.value){
         ComponentBottomSheet (
             content = {
@@ -82,7 +91,10 @@ fun ToDoScreen(modifier: Modifier = Modifier){
             showAddSheet.value = false
         }
     }
-    Box (modifier = modifier){
+    Box (
+        modifier = modifier,
+        contentAlignment = Alignment.BottomCenter
+    ){
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -140,19 +152,39 @@ fun ToDoScreen(modifier: Modifier = Modifier){
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn {
-                items(todos.size) { i ->
-                    if(i == 0 || !viewModel.compareDates(todos[i-1].todo.date, todos[i].todo.date)){
+                items(todos, key = { it.todo.id }){ todoWithTags ->
+                    val index = todos.indexOf(todoWithTags)
+                    if (index == 0 || !viewModel.compareDates(todos[index - 1].todo.date, todoWithTags.todo.date)) {
                         Text(
                             modifier = Modifier.padding(top = 20.dp, start = 1.dp),
-                            text = viewModel.formatDate(todos[i].todo.date),
-                            fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface,
+                            text = viewModel.formatDate(todoWithTags.todo.date),
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold
                         )
                     }
+
                     ToDoListItem(
-                        todoWithTags = viewModel.convertDto(todos[i]),
+                        todoWithTags = viewModel.convertDto(todoWithTags),
                         onStatusChange = {
-                            viewModel.updateToDo(todos[i].todo.copy(status = it))
+                            viewModel.updateToDo(todoWithTags.todo.copy(status = it))
+                        },
+                        onDelete = {
+                            viewModel.deleteTodoWithTags(todoWithTags)
+                            scope.launch {
+                                val result = snackBarHostState.showSnackbar(
+                                    message = application.getString(
+                                        R.string.restore,
+                                        todoWithTags.todo.title
+                                    ),
+                                    actionLabel = application.getString(R.string.restoreString),
+                                    duration = SnackbarDuration.Short
+                                )
+
+                                if (result == SnackbarResult.ActionPerformed) {
+                                    viewModel.insertToDoWithTags(todoWithTags = viewModel.convertDto(todoWithTags))
+                                }
+                            }
                         }
                     )
                 }
@@ -171,6 +203,8 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                 showAddSheet.value = true
             }
         }
+
+        SnackbarHost(hostState = snackBarHostState)
     }
 }
 

@@ -10,12 +10,12 @@ class ProfileViewModel(
         return try {
             val response = apiClient.apiService.getConnectionMessage()
             if (response.isSuccessful) {
-                response.body()?.message ?: "Boş yanıt"
+                response.body()?.message ?: "Connected but message is null"
             } else {
-                "Hata: ${response.code()} - ${response.errorBody()?.string()}"
+                "Can not connected" //"Error: ${response.code()} - ${response.errorBody()?.string()}"
             }
         } catch (e: Exception) {
-            "İstisna: ${e.message}"
+            "Exception" //"Exception: ${e.message}"
         }
     }
 }
