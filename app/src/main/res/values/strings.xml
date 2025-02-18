@@ -28,6 +28,8 @@
     <string name="due">Due %1$s</string>
     <string name="restore">Restore: %1$s</string>
     <string name="restoreString">Restore</string>
+    <string name="update">Update</string>
+    <string name="update_task">Update Task</string>
 
     <string-array name="weekdays">
         <item>Mon</item>

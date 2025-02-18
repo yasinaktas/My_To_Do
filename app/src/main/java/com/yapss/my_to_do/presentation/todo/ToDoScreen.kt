@@ -185,6 +185,9 @@ fun ToDoScreen(modifier: Modifier = Modifier){
                                     viewModel.insertToDoWithTags(todoWithTags = viewModel.convertDto(todoWithTags))
                                 }
                             }
+                        },
+                        onClick = {
+
                         }
                     )
                 }

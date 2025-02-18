@@ -43,7 +43,7 @@ import com.yapss.my_to_do.presentation._components.RoundedOutlinedRectangle
 import java.util.Date
 
 @Composable
-fun ToDoListItem(todoWithTags: DtoToDoWithTags,onStatusChange:(status:String)->Unit,onDelete:()->Unit){
+fun ToDoListItem(todoWithTags: DtoToDoWithTags,onStatusChange:(status:String)->Unit,onDelete:()->Unit, onClick:()->Unit){
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { dismissValue ->
             if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
@@ -74,7 +74,9 @@ fun ToDoListItem(todoWithTags: DtoToDoWithTags,onStatusChange:(status:String)->U
             }
         ) {
 
-            ComponentCard(content = {
+            ComponentCard(modifier = Modifier.clickable {
+                onClick()
+            },content = {
                 Row(
                     modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp)
                         .background(MaterialTheme.colorScheme.surface)
@@ -201,5 +203,5 @@ fun PreviewToDoListItem(){
             ),
             tags = listOf(DtoTag("Tag1"),DtoTag("Tag2"),DtoTag("Tag3"))
         ),
-        onStatusChange = {}, onDelete = {})
+        onStatusChange = {}, onDelete = {}, onClick = {})
 }

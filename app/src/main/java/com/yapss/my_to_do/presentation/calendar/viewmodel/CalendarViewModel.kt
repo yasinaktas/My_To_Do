@@ -15,6 +15,10 @@ class CalendarViewModel(
         return formatDateUseCase.formatMonthYear(time)
     }
 
+    fun formatFullDate(time:Long):String{
+        return formatDateUseCase.formatFullDate(time)
+    }
+
     fun compareDates(date1:Long,date2:Long):Boolean{
         return formatDateUseCase.formatFullDate(date1) == formatDateUseCase.formatFullDate(date2)
     }

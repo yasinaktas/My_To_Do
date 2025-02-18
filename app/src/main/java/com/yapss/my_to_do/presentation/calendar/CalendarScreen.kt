@@ -3,7 +3,6 @@ package com.yapss.my_to_do.presentation.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,7 +46,7 @@ import com.yapss.my_to_do.presentation.calendar.viewmodel.CalendarViewModel
 import java.util.Calendar
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(modifier: Modifier = Modifier){
     val application = LocalContext.current.applicationContext as ThisApplication
@@ -57,7 +57,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
             formatDateUseCase = application.formatDateUseCase)
     )
     val openDatePicker = remember { mutableStateOf(false) }
-    val selectedDate = remember { mutableLongStateOf(Date().time) }
+    val selectedDate = rememberSaveable{ mutableLongStateOf(Date().time) }
     val isExpanded = remember { mutableStateOf(false) }
     val calendar = Calendar.getInstance().apply {
         timeInMillis = selectedDate.longValue
@@ -76,7 +76,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
                 }
             }
         ) {
-            val datePickerState = rememberDatePickerState()
+            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.longValue)
             DatePicker(state = datePickerState)
 
             val selectedMillis = datePickerState.selectedDateMillis
@@ -118,7 +118,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
 
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             ComponentCard(modifier = Modifier,content = {
                 Column (
@@ -136,7 +136,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
                         Text(
                             text = stringResource(
                                 R.string.due,
-                                viewModel.formatMonthYear(selectedDate.longValue)
+                                viewModel.formatFullDate(selectedDate.longValue)
                             ),
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -191,13 +191,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
                                             modifier = Modifier
                                                 .padding(4.dp)
                                                 .size(40.dp)
-                                                .background(
-                                                    if (calendarItems[index].isNotEmpty() && !weekDays.contains(
-                                                            calendarItems[index]
-                                                        )
-                                                    ) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent,
-                                                    shape = RoundedCornerShape(8.dp)
-                                                ),
+                                                .background(if (calendarItems[index].isNotEmpty() && !weekDays.contains(calendarItems[index])) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent, shape = RoundedCornerShape(8.dp)),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
@@ -212,13 +206,7 @@ fun CalendarScreen(modifier: Modifier = Modifier){
                                             modifier = Modifier
                                                 .padding(4.dp)
                                                 .size(40.dp)
-                                                .background(
-                                                    if (calendarItems[index].isNotEmpty() && !weekDays.contains(
-                                                            calendarItems[index]
-                                                        )
-                                                    ) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f) else Color.Transparent,
-                                                    shape = RoundedCornerShape(8.dp)
-                                                ),
+                                                .background(if (calendarItems[index].isNotEmpty() && !weekDays.contains(calendarItems[index])) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f) else Color.Transparent, shape = RoundedCornerShape(8.dp)),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(

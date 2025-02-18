@@ -113,14 +113,15 @@ class ToDoViewModel(
 
     fun insertToDoWithTags(todoWithTags: DtoToDoWithTags){
         viewModelScope.launch {
-            val todoId:Long = toDoRepository.insert(todo = ToDo(
+            val todo = ToDo(
                 title = todoWithTags.todo.title,
                 description = todoWithTags.todo.description,
                 dueDate = todoWithTags.todo.dueDate,
                 priority = todoWithTags.todo.priority,
                 status = todoWithTags.todo.status,
                 date = todoWithTags.todo.date
-            ))
+            )
+            val todoId:Long = toDoRepository.insert(todo = todo)
             for(tag in todoWithTags.tags){
                 tagRepository.insertTag(Tag(name = tag.name, todoId = todoId))
             }
